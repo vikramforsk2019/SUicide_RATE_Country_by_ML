@@ -25,7 +25,7 @@
 
     population ----> 279800
 
-    country-year ----> 7.11
+    country-year ----> 7.11 #remoove it
 
     gdp_for_year ($) ---->2,10,56,21,800
 
@@ -81,22 +81,121 @@ dataset[' gdp_for_year ($) ']=dataset[' gdp_for_year ($) '].apply(gdp_float)
 #dataset.axes
 
 # Encoding categorical data
-features = dataset.iloc[:, :-1].values
+features = dataset.iloc[:, [0,1,2,3,4,5,6,9,10]].values
 
 labels = dataset.iloc[:, -1].values
 
+# Encoding categorical data
 from sklearn.preprocessing import LabelEncoder
-labelencoder = LabelEncoder()
-features[:, 0] = labelencoder.fit_transform(features[:, 0])
+#for coutry
+labelencoder1 = LabelEncoder()
+features[:, 0] = labelencoder1.fit_transform(features[:, 0])
+
+# for  sex
+labelencoder2 = LabelEncoder()
+features[:, 2] = labelencoder2.fit_transform(features[:, 2])
+
+#for age group
+labelencoder3 = LabelEncoder()
+features[:, 3] = labelencoder2.fit_transform(features[:, 3])
+
 
 
 from sklearn.preprocessing import OneHotEncoder
-onehotencoder = OneHotEncoder(categorical_features = [0])
-features = onehotencoder.fit_transform(features).toarray()
+#for coutry
+cou_hot = OneHotEncoder(categorical_features = [0])
+features = cou_hot.fit_transform(features).toarray()
+# dropping first column
+features = features[:, 1:]
 
-df_3 = pd.get_dummies(features,drop_first=True)
-features[0]
+#for age group
+age_hot = OneHotEncoder(categorical_features = [102])
+features = age_hot.fit_transform(features).toarray()
+features = features[:, 1:]
 
+#1.Albania
+le = labelencoder1.transform(['Albania'])
+ohe = cou_hot.transform(le.reshape(1,1)).toarray()
+ohe[0][1:]
+
+#2.year
+year = 2014
+#Sex ----> Male
+sex = 1
+#Age ----> 24
+le2 = np.array([0,0,0,0,0]) 
+#laelecode do not  work  give alwayes 0 elemet we direct give the label no
+#age2 = age_hot.transform(le2.reshape(1,1)).toarray()
+#age[0][1:]
+#3.Suside no. ----> 22
+Suside_no = 22
+#4.population ----> 279800
+population = 279800
+ 
+gdp_rate = 4.5
+#5 gdp_for_year ($)  ---->2,10,56,21,800
+gdp_year = 2105621800
+#6.gdp_per_capita ($)  ---->749
+gdp_cap = 749
+ 
+[print(i) for i in le2]
+
+for i in ohe:
+    list(i)
+
+x = [(i for i in le2, int),year,sex,Suside_no,population,gdp_rate,gdp_year,gdp_cap]
+ 
+a = np.fromiter( [ x for x in range(0,4) ], int )
+ = 22
+dept_name=input('enter the coutry name>')
+work_hour=input('enter the hours>')
+
+le = labelencoder.transform([dept_name])
+ohe = onehotencoder.transform(le.reshape(1,1)).toarray()
+x = [ohe[0][1],ohe[0][2],int(work_hour),1,3]
+x = np.array(x)
+
+
+105-year
+104-coutry ed
+106-sex
+107-sucide o
+
+
+
+
+
+
+
+from sklearn.model_selection import train_test_split
+features_train, features_test, labels_train, labels_test = train_test_split(features, labels, test_size = 0.25, random_state = 0)
+
+
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+features_train = sc.fit_transform(features_train)
+features_test = sc.transform(features_test)
+
+
+from sklearn.linear_model import LogisticRegression
+classifier = LogisticRegression()
+classifier.fit(features_train, labels_train)
+
+
+#Calculate Class Probabilities
+probability = classifier.predict_proba(features_test)
+
+# Predicting the class labels
+labels_pred = classifier.predict(features_test)
+
+pd.DataFrame(labels_pred, labels_test)
+
+
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(labels_test, labels_pred)
+
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+print(accuracy_score(labels_test, labels_pred)*100)
 
 
 

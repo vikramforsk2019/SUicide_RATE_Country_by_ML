@@ -58,6 +58,10 @@ country ----> Albania
    gdp_per_capita ($)  ---->749
 
    according to data find it was lie on which generation.
+105-year
+104-coutry ed
+106-sex
+107-sucide o
 
 """
 
@@ -115,6 +119,9 @@ features = features[:, 1:]
 
 #1.Albania
 le = labelencoder1.transform(['Albania'])
+
+le2 = np.array([2])
+
 ohe = cou_hot.transform(le.reshape(1,1)).toarray()
 ohe[0][1:]
 
@@ -122,8 +129,7 @@ ohe[0][1:]
 year = 2014
 #Sex ----> Male
 sex = 1
-#Age ----> 24
-le2 = np.array([0,0,0,0,0]) 
+#Age ----> 24 
 #laelecode do not  work  give alwayes 0 elemet we direct give the label no
 #age2 = age_hot.transform(le2.reshape(1,1)).toarray()
 #age[0][1:]
@@ -138,28 +144,20 @@ gdp_year = 2105621800
 #6.gdp_per_capita ($)  ---->749
 gdp_cap = 749
  
-[print(i) for i in le2]
 
-for i in ohe:
-    list(i)
+cou_list = []
+for i in ohe[0][1:]:
+ cou_list.append(i)
 
-x = [(i for i in le2, int),year,sex,Suside_no,population,gdp_rate,gdp_year,gdp_cap]
+age_list = [0,0,0,0,0]
+
+x = [year,sex,Suside_no,population,gdp_rate,gdp_year,gdp_cap]
+
+final_features= age_list + cou_list + x
+
+
  
-a = np.fromiter( [ x for x in range(0,4) ], int )
- = 22
-dept_name=input('enter the coutry name>')
-work_hour=input('enter the hours>')
 
-le = labelencoder.transform([dept_name])
-ohe = onehotencoder.transform(le.reshape(1,1)).toarray()
-x = [ohe[0][1],ohe[0][2],int(work_hour),1,3]
-x = np.array(x)
-
-
-105-year
-104-coutry ed
-106-sex
-107-sucide o
 
 
 
@@ -176,6 +174,7 @@ sc = StandardScaler()
 features_train = sc.fit_transform(features_train)
 features_test = sc.transform(features_test)
 
+final_features = sc.transform(final_features)
 
 from sklearn.linear_model import LogisticRegression
 classifier = LogisticRegression()
@@ -198,6 +197,9 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 print(accuracy_score(labels_test, labels_pred)*100)
 
 
+x=np.array(final_features).reshape(1,-1)
+labels_pred = classifier.predict(x)
+print('predicted generation::',labels_pred[0])
 
 """
 dataset['country-year'].value_counts() #2321 differet coutry_year
